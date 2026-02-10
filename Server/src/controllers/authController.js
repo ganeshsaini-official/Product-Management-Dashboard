@@ -5,7 +5,7 @@ dotenv.config();
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import { generateOTP, sendOTP } from "../utils/sendOtp.js";
-import Otp from "../models/otp.js";
+import Otp from "../models/Otp.js";
 
 const generateToken = (userId) => {
   return jwt.sign(
