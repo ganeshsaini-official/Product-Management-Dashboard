@@ -3,9 +3,9 @@ dotenv.config();
 
 import express from "express";
 import cors from "cors";
-import userRouter from "./routes/authRoutes.js";
-import productRouter from "./routes/productRoutes.js";
-import dbConnect from './config/db.js';
+import userRouter from "./src/routes/authRoutes.js";
+import productRouter from "./src/routes/productRoutes.js";
+import dbConnect from './src/config/db.js';
 
 const app = express();
 
