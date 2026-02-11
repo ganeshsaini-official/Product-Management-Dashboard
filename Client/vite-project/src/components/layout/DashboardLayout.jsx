@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import LeftDashboard from "../dashboardComponent/leftDashboard";
+import LeftDashboard from "../dashboardComponent/LeftDashboard";
 import RightDashBoard from "../dashboardComponent/RightDashboard";
 
 const DashboardLayout = () => {
