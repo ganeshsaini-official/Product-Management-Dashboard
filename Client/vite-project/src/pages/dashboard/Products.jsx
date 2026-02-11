@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import AddProductModal from "./AddProductModal";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom"; // useLocation add karo
-import EmptyIcon from "../../components/common/emptyIcon";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { GoSearch } from "react-icons/go";
 import Logout from "../../components/common/Logout";
+import EmptyIcon from "../../components/common/EmptyIcon";
 
 const Products = ({ status }) => {
     const [products, setProducts] = useState([]);
