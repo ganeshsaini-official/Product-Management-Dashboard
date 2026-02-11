@@ -1,4 +1,5 @@
-
+import runningImg from "../../assets/cart.jpg"
+import logo from "../../assets/logo.png"
 const LoginLeft = () => {
   return (
     <>
@@ -10,8 +11,8 @@ const LoginLeft = () => {
           <div className="running-img-container">
             <img
               id="running-img"
-              src="src/assets/cart.jpg"
-              alt=""
+              src={runningImg}
+              alt="RunningImg"
             />
           </div>
 
@@ -23,7 +24,7 @@ const LoginLeft = () => {
           <div className="logo-img-container">
             <img
               id="logo-img"
-              src="src/assets/logo.png"
+              src={logo}
               alt=""
             />
           </div>
