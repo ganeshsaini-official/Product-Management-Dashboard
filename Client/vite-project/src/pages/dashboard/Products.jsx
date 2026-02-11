@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AddProductModal from "./AddProductModal";
 import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom"; // useLocation add karo
+import { useNavigate, useLocation } from "react-router-dom"; 
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { GoSearch } from "react-icons/go";
@@ -18,17 +18,15 @@ const Products = ({ status }) => {
     const [loading, setLoading] = useState(false);
 
     const navigate = useNavigate();
-    const location = useLocation(); // Current route check karne ke liye
-    
-    // Check if we're on main products page (not published/unpublished)
+    const location = useLocation(); 
+    const API = import.meta.env.VITE_API_URL
     const isMainProductsPage = !status && location.pathname === "/dashboard/products";
 
     const fetchProducts = async () => {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
-            const res = await axios.get(
-                "http://localhost:5000/api/products",
+            const res = await axios.get(`${API}/api/products`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -73,7 +71,7 @@ const Products = ({ status }) => {
     const handleDelete = async () => {
         try {
             await axios.delete(
-                `http://localhost:5000/api/products/${deleteProduct._id}`,
+                `${API}/api/products/${deleteProduct._id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -95,7 +93,7 @@ const Products = ({ status }) => {
     const toggleStatus = async (id, publish) => {
         try {
             await axios.patch(
-                `http://localhost:5000/api/products/${id}/status`,
+                `${API}/api/products/${id}/status`,
                 { status: publish },
                 {
                     headers: {

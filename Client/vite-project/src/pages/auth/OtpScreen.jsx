@@ -12,6 +12,7 @@ const OtpScreen = () => {
   const { state } = useLocation();
 
   const identifier = state?.identifier; // email or phone
+  const API = import.meta.env.VITE_API_URL
 
   useEffect(() => {
     if (timer === 0) return;
@@ -40,37 +41,36 @@ const OtpScreen = () => {
     }
   };
 
-const handleVerifyOTP = async () => {
-  const enteredOtp = otp.join("");
+  const handleVerifyOTP = async () => {
+    const enteredOtp = otp.join("");
 
-  if (enteredOtp.length !== 6) {
-    alert("Enter valid 6 digit OTP");
-    return;
-  }
+    if (enteredOtp.length !== 6) {
+      alert("Enter valid 6 digit OTP");
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const res = await axios.post(
-      "http://localhost:5000/api/auth/verify-otp",
-      {
-        identifier,
-        otp: enteredOtp
-      }
-    );
+      const res = await axios.post(`${API}/api/auth/verify-otp`,
+        {
+          identifier,
+          otp: enteredOtp
+        }
+      );
 
-    localStorage.setItem("token", res.data.data.token);
+      localStorage.setItem("token", res.data.data.token);
 
-    navigate("/dashboard/home");
+      navigate("/dashboard/home");
 
-  } catch (error) {
-    console.log("invaid otp error --->" , error.response?.data?.message );
-    
-    alert(error.response?.data?.message || "Invalid OTP");
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (error) {
+      console.log("invaid otp error --->", error.response?.data?.message);
+
+      alert(error.response?.data?.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   const handleResend = async () => {
@@ -79,8 +79,7 @@ const handleVerifyOTP = async () => {
         ? { email: identifier }
         : { phone: identifier };
 
-      await axios.post(
-        "http://localhost:5000/api/auth/request-otp",
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/request-otp`,
         payload
       );
 

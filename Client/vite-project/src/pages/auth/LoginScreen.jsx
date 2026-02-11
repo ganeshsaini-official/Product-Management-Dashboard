@@ -20,8 +20,7 @@ const LoginScreen = () => {
         ? { email: identifier }
         : { phone: identifier };
 
-      await axios.post(
-        "http://localhost:5000/api/auth/request-otp",
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/request-otp`,
         payload
       );
 

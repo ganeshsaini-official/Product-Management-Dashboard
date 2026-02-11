@@ -107,6 +107,8 @@ const AddProductModal = ({ onClose, onProductAdded, editProduct, refreshProducts
             formDataToSend.append("stock", Number(formData.stock));
             formDataToSend.append("exchangeEligible", formData.exchangeEligible ? "true" : "false");
 
+            const API = import.meta.env.VITE_API_URL
+
             imageFiles.forEach(file => {
                 formDataToSend.append("images", file);
             });
@@ -125,13 +127,13 @@ const AddProductModal = ({ onClose, onProductAdded, editProduct, refreshProducts
 
             if (editProduct) {
                 response = await axios.put(
-                    `http://localhost:5000/api/products/${editProduct._id}`,
+                    `${API}/api/products/${editProduct._id}`,
                     formDataToSend,
                     config
                 );
             } else {
                 response = await axios.post(
-                    "http://localhost:5000/api/products",
+                    `${import.meta.env.VITE_API_URL}/api/products`,
                     formDataToSend,
                     config
                 );
