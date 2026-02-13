@@ -51,9 +51,7 @@ const LoginScreen = () => {
     <div className="login-right-content">
       <div className="login-top-container">
         <h1>Login to your Product Account</h1>
-
         <div className="login-input-container">
-          <label>Email</label>
           <input
             type="email"
             name="email"
@@ -63,7 +61,6 @@ const LoginScreen = () => {
         </div>
 
         <div className="login-input-container">
-          <label>Password</label>
           <input
             type="password"
             name="password"
