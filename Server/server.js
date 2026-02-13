@@ -10,9 +10,11 @@ import dbConnect from './src/config/db.js';
 const app = express();
 
 app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true
+  origin: process.env.FRONTEND_URL?.split(","),
+  credentials: true
 }));
+
+
 app.use(express.json());
 
 app.use("/api/auth", userRouter);

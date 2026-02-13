@@ -3,35 +3,45 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const LoginScreen = () => {
-  const [identifier, setIdentifier] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const handleLogin = async () => {
-    if (!identifier) {
-      alert("Email or phone number required");
+    if (!formData.email || !formData.password) {
+      alert("Email and Password required");
       return;
     }
 
     try {
       setLoading(true);
 
-      const payload = identifier.includes("@")
-        ? { email: identifier }
-        : { phone: identifier };
-
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/request-otp`,
-        payload
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        formData
       );
 
-      navigate("/otp", {
-        state: { identifier }
-      });
+      localStorage.setItem("token", res.data.data.token);
+
+      alert("Login Successful");
+
+      navigate("/dashboard/home");
 
     } catch (error) {
-      console.log("Otp send error ---->" , error.response);
-      
-      alert(error.response?.data?.error || "Something went wrong");
+      console.log("Login error ---->", error.response);
+      alert(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -43,22 +53,32 @@ const LoginScreen = () => {
         <h1>Login to your Product Account</h1>
 
         <div className="login-input-container">
-          <label>Email or Phone number</label>
+          <label>Email</label>
           <input
-            type="text"
-            placeholder="Enter email or phone number"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
+            type="email"
+            name="email"
+            placeholder="Enter email"
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="login-input-container">
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Enter password"
+            onChange={handleChange}
           />
         </div>
 
         <button onClick={handleLogin} disabled={loading}>
-          {loading ? "Sending OTP..." : "Login"}
+          {loading ? "Logging in..." : "Login"}
         </button>
       </div>
 
       <div className="login-bottom-container">
-        <span>Don't have a Productr Account </span>
+        <span>Don't have a Product Account </span>
         <Link to="/signup">SignUp Here</Link>
       </div>
     </div>

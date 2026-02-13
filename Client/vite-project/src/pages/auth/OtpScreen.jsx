@@ -11,7 +11,7 @@ const OtpScreen = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
 
-  const identifier = state?.identifier; // email or phone
+  const identifier = state?.identifier; 
   const API = import.meta.env.VITE_API_URL
 
   useEffect(() => {
@@ -72,25 +72,25 @@ const OtpScreen = () => {
     }
   };
 
+const handleResend = async () => {
+  try {
+    const payload = identifier.includes("@")
+      ? { email: identifier }
+      : { phone: identifier };
 
-  const handleResend = async () => {
-    try {
-      const payload = identifier.includes("@")
-        ? { email: identifier }
-        : { phone: identifier };
+    const res = await axios.post(`${API}/api/auth/request-otp`, payload);
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/request-otp`,
-        payload
-      );
+    alert("Your OTP is: " + res.data.otp);
 
-      setOtp(new Array(6).fill(""));
-      setTimer(20);
-      inputsRef.current[0].focus();
+    setOtp(new Array(6).fill(""));
+    setTimer(20);
+    inputsRef.current[0].focus();
 
-    } catch (error) {
-      alert("Failed to resend OTP");
-    }
-  };
+  } catch (error) {
+    alert("Failed to resend OTP");
+  }
+};
+
 
   return (
     <div className="otp-container">

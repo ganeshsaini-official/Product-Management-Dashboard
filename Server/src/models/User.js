@@ -1,33 +1,50 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";  // npm install bcryptjs
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Name is required'],
-    trim: true,
-    minlength: [2, 'Name must be at least 2 characters'],
-    maxlength: [50, 'Name cannot exceed 50 characters']
+    required: [true, "Name is required"],
+    trim: true
   },
   phone: {
     type: String,
-    required: [true, 'Phone number is required'],
+    required: [true, "Phone number is required"],
     unique: true,
-    match: [/^[6-9]\d{9}$/, 'Please enter a valid 10-digit Indian phone number']
+    match: [/^[6-9]\d{9}$/, "Please enter valid 10-digit Indian phone number"]
   },
   email: {
     type: String,
-    trim: true,
+    sparse: true,
     lowercase: true,
-    match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+    trim: true
+  },
+  password: {    
+    type: String,
+    required: [true, "Password is required"],
+    minlength: [6, "Password must be at least 6 characters"],
+    select: false 
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
+    enum: ["user", "admin"],
+    default: "user"
   }
 }, {
   timestamps: true
 });
 
-const User = mongoose.model('User', userSchema);
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+const User = mongoose.model("User", userSchema);
 export default User;

@@ -5,9 +5,15 @@ dotenv.config();
 
 const dbConnect = async () => {
   try {
-    const mongoDB = process.env.MONGODB_URI || "mongodb://localhost:27017/product_dashboard";
-    await mongoose.connect(mongoDB); //
-    console.log(" MongoDB connected successfully.");
+    const mongoDB = process.env.MONGODB_URI ;
+
+    if (!mongoDB) {
+      throw new Error("MONGODB_URI is not defined");
+    }
+
+    console.log("Connecting to MongoDB...");
+    await mongoose.connect(mongoDB);
+    console.log("MongoDB connected successfully.");
   } catch (error) {
     console.error(" MongoDB connection error:", error.message);
     process.exit(1);

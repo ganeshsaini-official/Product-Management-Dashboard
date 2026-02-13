@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import LoginLayout from "./pages/auth/LoginLayout";
 import LoginScreen from "./pages/auth/LoginScreen";
 import OtpScreen from "./pages/auth/OtpScreen";
@@ -13,12 +13,17 @@ const App = () => {
   return (
     <Routes>
 
+      {/* ROOT */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+
       {/* AUTH */}
-      <Route path="/" element={<LoginLayout />}>
+      <Route path="/login" element={<LoginLayout />}>
         <Route index element={<LoginScreen />} />
         <Route path="otp" element={<OtpScreen />} />
-        <Route path="signup" element={<SignUp/>} />
       </Route>
+
+      {/* SIGNUP (separate) */}
+      <Route path="/signup" element={<SignUp />} />
 
       {/* DASHBOARD */}
       <Route path="/dashboard" element={<DashboardLayout />}>
@@ -29,7 +34,6 @@ const App = () => {
         </Route>
 
         <Route path="products" element={<Products />} />
-
       </Route>
 
     </Routes>

@@ -1,11 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-import { generateOTP, sendOTP } from "../utils/sendOtp.js";
-import Otp from "../models/Otp.js";
 
 const generateToken = (userId) => {
   return jwt.sign(
@@ -17,29 +14,37 @@ const generateToken = (userId) => {
 
 const signup = async (req, res) => {
   try {
-    const { name, phone, email } = req.body;
+    const { name, phone, email, password } = req.body;  
 
-    const existingUser = await User.findOne({ phone });
+    if (!password || password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters"
+      });
+    }
+
+    const existingUser = await User.findOne({ 
+      $or: [{ phone }, { email }] 
+    });
+    
     if (existingUser) {
       return res.status(400).json({
         success: false,
         message: "User already exists. Please login."
       });
     }
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists. Please login."
-      });
-    }
+
     const user = await User.create({
       name,
       phone,
       email: email || "",
+      password,  
       role: "user"
     });
 
     const token = generateToken(user._id);
+
+    user.password = undefined;
 
     res.status(201).json({
       success: true,
@@ -48,18 +53,15 @@ const signup = async (req, res) => {
     });
 
   } catch (error) {
-
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map(e => e.message);
-
       return res.status(400).json({
         success: false,
         message: errors[0]
       });
     }
-
+    
     console.error("Signup Error:", error);
-
     res.status(500).json({
       success: false,
       message: "Signup failed"
@@ -67,120 +69,42 @@ const signup = async (req, res) => {
   }
 };
 
-
-
-const requestOtp = async (req, res) => {
+const login = async (req, res) => {
   try {
-    const { email, phone } = req.body;
+    const { email, password } = req.body;
 
-    if (!email && !phone) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: "Email or phone required"
-      });
-    }
-    if (phone && !/^[6-9]\d{9}$/.test(phone)) {
-      return res.status(400).json({
-        success: false,
-        error: "Please enter a valid 10-digit Indian phone number"
+        message: "Email and password are required"
       });
     }
 
-    let user;
-
-    if (email) {
-      user = await User.findOne({ email });
-    } else {
-      user = await User.findOne({ phone });
-    }
-
+    const user = await User.findOne({ email }).select("+password");
+    
     if (!user) {
-      return res.status(404).json({
+      return res.status(401).json({
         success: false,
-        error: "User not found. Please signup first."
+        message: "User not found please signup first."
       });
     }
 
-    const otp = generateOTP();
-
-    const otpExpiresAt = new Date();
-    otpExpiresAt.setMinutes(otpExpiresAt.getMinutes() + 10);
-
-    await Otp.create({
-      phone: user.phone,
-      email: user.email,
-      otp,
-      otpExpiresAt
-    });
-
-    await sendOTP(
-      {
-        phone: user.phone,
-        email: user.email
-      },
-      otp
-    );
-
-
-    res.status(200).json({
-      success: true,
-      message: "OTP sent successfully"
-    });
-
-  } catch (error) {
-    console.error("OTP Request Error:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to send OTP"
-    });
-  }
-};
-
-const verifyOtp = async (req, res) => {
-  try {
-    const { identifier, otp } = req.body; 
-
-    if (!identifier || !otp) {
-      return res.status(400).json({
+    const isPasswordValid = await user.comparePassword(password);
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({
         success: false,
-        message: "Identifier and OTP are required"
+        message: "Invalid your password"
       });
     }
-
-    let user;
-    if (identifier.includes("@")) {
-      user = await User.findOne({ email: identifier });
-    } else {
-      user = await User.findOne({ phone: identifier });
-    }
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found"
-      });
-    }
-
-    const otpRecord = await Otp.findOne({
-      phone: user.phone, 
-      otp,
-      otpExpiresAt: { $gt: new Date() }
-    });
-
-    if (!otpRecord) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired OTP"
-      });
-    }
-
-    await Otp.deleteOne({ _id: otpRecord._id });
 
     const token = generateToken(user._id);
 
+    user.password = undefined;
+
     res.status(200).json({
       success: true,
-      message: "OTP verified successfully",
+      message: "Login successful",
       data: {
         user: {
           id: user._id,
@@ -192,11 +116,12 @@ const verifyOtp = async (req, res) => {
         token
       }
     });
+
   } catch (error) {
-    console.error("OTP Verification Error:", error);
+    console.error("Login Error:", error);
     res.status(500).json({
       success: false,
-      message: "OTP verification failed",
+      message: "Login failed",
       error: error.message
     });
   }
@@ -205,7 +130,7 @@ const verifyOtp = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select("-__v");
-
+    
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -229,7 +154,6 @@ const getProfile = async (req, res) => {
 
 export {
   signup,
-  requestOtp,
-  verifyOtp,
+  login,        
   getProfile,
 };

@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: ""
+    phone: "",
+    password: "",
+    confirmPassword: ""
   });
 
   const handleChange = (e) => {
@@ -17,33 +20,60 @@ const SignUp = () => {
     });
   };
 
-const handleSignup = async () => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(formData)
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Signup failed");
+  const handleSignup = async () => {
+    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
+      alert("All fields are required");
       return;
     }
 
-    alert("Signup successful. Please login now.");
+    if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
 
-    // phone pass kar do OTP screen ko
-    navigate("/");
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
 
-  } catch (error) {
-    console.error("Signup error:", error);
-    alert("Something went wrong");
-  }
-};
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message || "Signup failed");
+        return;
+      }
+
+      if (data.data?.token) {
+        localStorage.setItem("token", data.data.token);
+        navigate("/dashboard/home");
+      } else {
+        alert("Signup successful. Please login now.");
+        navigate("/");
+      }
+
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="signup-content">
@@ -71,6 +101,24 @@ const handleSignup = async () => {
 
           <div className="singup-input">
             <input
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="singup-input">
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="singup-input">
+            <input
               type="text"
               name="phone"
               placeholder="Enter phone number"
@@ -78,7 +126,9 @@ const handleSignup = async () => {
             />
           </div>
 
-          <button onClick={handleSignup}>SignUp</button>
+          <button onClick={handleSignup} disabled={loading}>
+            {loading ? "Creating Account..." : "SignUp"}
+          </button>
         </div>
       </div>
     </div>
