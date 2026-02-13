@@ -235,20 +235,6 @@ body {
     cursor: pointer;
 }
 
-.otp-container {
-    width: 376px;
-    margin: 80px auto;
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.otp-container h2 {
-    font-size: 21px;
-    color: #111652;
-    margin-bottom: 20px;
-}
-
 .label {
     text-align: left;
     font-size: 14px;
@@ -257,58 +243,6 @@ body {
     color: #543434;
 }
 
-.otp-inputs {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.otp-inputs input {
-    width: 48px;
-    height: 40px;
-    border-radius: 8px;
-    border: 2px solid rgba(212, 212, 212, 1);
-    text-align: center;
-    font-size: 18px;
-    outline: none;
-    transition: 0.3s;
-}
-
-.otp-inputs input:focus {
-    border-color: rgba(7, 16, 116, 0.4);
-}
-
-.otp-btn {
-    width: 100%;
-    padding: 12px;
-    background: #0a0a5c;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-.otp-btn:hover {
-    background: #050542;
-}
-
-.resend {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #555;
-}
-
-.timer {
-    color: rgba(7, 16, 116, 1);
-    font-weight: 600;
-}
-
-.resend-btn {
-    color: rgba(7, 16, 116, 1);
-    cursor: pointer;
-    font-weight: 600;
-}
 
 .dashboard-main-container {
     width: 100%;
@@ -1394,17 +1328,6 @@ body {
         width: 290px;
 
     }
-
-    .otp-inputs input {
-        width: 40px;
-
-    }
-
-    .otp-btn {
-        width: 80%;
-
-    }
-
     .all-product-search {
         width: 225px;
     }

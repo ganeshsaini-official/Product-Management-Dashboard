@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import LoginLayout from "./pages/auth/LoginLayout";
 import LoginScreen from "./pages/auth/LoginScreen";
-import OtpScreen from "./pages/auth/OtpScreen";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import Home from "./pages/dashboard/Home";
 import Products from "./pages/dashboard/Products";
@@ -19,7 +18,6 @@ const App = () => {
       {/* AUTH */}
       <Route path="/login" element={<LoginLayout />}>
         <Route index element={<LoginScreen />} />
-        <Route path="otp" element={<OtpScreen />} />
       </Route>
 
       {/* SIGNUP (separate) */}
