@@ -10,8 +10,8 @@ import dbConnect from './src/config/db.js';
 const app = express();
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL?.split(","),
-  credentials: true
+    origin: process.env.FRONTEND_URL?.split(","),
+    credentials: true
 }));
 
 
@@ -49,7 +49,6 @@ startServer();
 
 process.on("unhandledRejection", (err) => {
     console.error("Unhandled Rejection:", err);
-    process.exit(1);
 });
 
 process.on("uncaughtException", (err) => {

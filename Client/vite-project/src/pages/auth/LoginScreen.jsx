@@ -19,7 +19,8 @@ const LoginScreen = () => {
     });
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault(); // form submit ko prevent kare
     if (!formData.email || !formData.password) {
       alert("Email and Password required");
       return;
@@ -51,27 +52,30 @@ const LoginScreen = () => {
     <div className="login-right-content">
       <div className="login-top-container">
         <h1>Login to your Product Account</h1>
-        <div className="login-input-container">
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter email"
-            onChange={handleChange}
-          />
-        </div>
 
-        <div className="login-input-container">
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter password"
-            onChange={handleChange}
-          />
-        </div>
+        <form className="login-form" onSubmit={handleLogin}>
+          <div className="login-input-container">
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              onChange={handleChange}
+            />
+          </div>
 
-        <button onClick={handleLogin} disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
+          <div className="login-input-container">
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              onChange={handleChange}
+            />
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
       </div>
 
       <div className="login-bottom-container">
