@@ -12,18 +12,19 @@ const App = () => {
   return (
     <Routes>
 
-      {/* ROOT */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* AUTH */}
-      <Route path="/login" element={<LoginLayout />}>
-        <Route index element={<LoginScreen />} />
+      <Route path="/" element={<LoginLayout />}>
+
+        <Route path="login" element={<LoginScreen />} />
+        <Route path="signup" element={<SignUp />} />
+
+        <Route index element={<Navigate to="/login" replace />} />
+
       </Route>
 
-      {/* SIGNUP (separate) */}
       <Route path="/signup" element={<SignUp />} />
 
-      {/* DASHBOARD */}
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route path="home" element={<Home />}>
           <Route index element={<Published />} />

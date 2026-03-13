@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -13,30 +15,39 @@ const SignUp = () => {
     confirmPassword: ""
   });
 
+  const [error, setError] = useState("");
+
   const handleChange = (e) => {
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+
+    // typing ke time error remove
+    setError("");
+
   };
 
   const handleSignup = async () => {
-    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
-      alert("All fields are required");
+
+    if (!formData.name || !formData.email || !formData.phone || !formData.password || !formData.confirmPassword) {
+      setError("All fields are required");
       return;
     }
 
     if (formData.password.length < 6) {
-      alert("Password must be at least 6 characters");
+      setError("Password must be at least 6 characters");
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     try {
+
       setLoading(true);
 
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/signup`, {
@@ -55,7 +66,7 @@ const SignUp = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(data.message || "Signup failed");
+        setError(data.message || "Signup failed");
         return;
       }
 
@@ -63,24 +74,31 @@ const SignUp = () => {
         localStorage.setItem("token", data.data.token);
         navigate("/dashboard/home");
       } else {
-        alert("Signup successful. Please login now.");
-        navigate("/");
+        navigate("/login");
       }
 
     } catch (error) {
+
       console.error("Signup error:", error);
-      alert("Something went wrong");
+      setError("Something went wrong");
+
     } finally {
       setLoading(false);
     }
+
   };
 
   return (
     <div className="signup-content">
       <div className="signup-container">
+
         <h1>SignUp to your Product Account</h1>
+        {error && (
+          <p className="error-text">{error}</p>
+        )}
 
         <div className="signup-input-container">
+
           <div className="singup-input">
             <input
               type="text"
@@ -129,7 +147,14 @@ const SignUp = () => {
           <button onClick={handleSignup} disabled={loading}>
             {loading ? "Creating Account..." : "SignUp"}
           </button>
+
         </div>
+
+        <div className="login-bottom-container">
+          <span>If you already have a Product Account </span>
+          <Link to="/login">Login Here</Link>
+        </div>
+
       </div>
     </div>
   );
